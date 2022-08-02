@@ -1,0 +1,23 @@
+language: java
+
+jdk:
+  - openjdk11
+
+services:
+  - docker
+
+install:
+  - mvn clean install -DskipTests
+  - docker build serveur -t scrabble:serveur
+  - docker build client -t scrabble:client
+
+
+script:
+  - mvn test
+  - cd client
+  - mvn exec:java -Dexec.args="--port=8081 --nom=J1 --mode=IT" &
+  - mvn exec:java -Dexec.args="--port=8082 --nom=J2 --mode=IT" &
+  - cd ../serveur
+  - mvn failsafe:integration-test
+  - cd ..
+  - docker-compose up

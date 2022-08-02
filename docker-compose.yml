@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+
+
+  serveur:
+    image: scrabble:serveur
+    container_name: serveur
+    ports:
+      - "8080"
+    networks:
+      testing_net:
+        ipv4_address: 172.28.0.253
+
+  client1:
+    image: scrabble:client
+    container_name: client1
+    ports:
+      - "8081"
+    networks:
+      testing_net:
+        ipv4_address: 172.28.0.3
+    depends_on:
+      - serveur
+
+  client2:
+    image: scrabble:client
+    container_name: client2
+    ports:
+      - "8082"
+    networks:
+      testing_net:
+        ipv4_address: 172.28.0.4
+    depends_on:
+      - serveur
+
+networks:
+  testing_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
